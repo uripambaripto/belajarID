@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Cek Status belajar.id</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans (Edukatif & Ramah Dibaca) -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Matikan scroll vertikal & horizontal */
+            overscroll-behavior: none;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f0f7ff;
+            /* Pola titik-titik buku catatan sekolah */
+            background-image: radial-gradient(#bae6fd 1.25px, transparent 1.25px);
+            background-size: 20px 20px;
+        }
+        .modal-enter {
+            animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="h-dvh w-screen overflow-hidden flex flex-col justify-between text-slate-800 select-none">
+
+    <!-- Header Edukatif Ringkas -->
+    <header class="shrink-0 bg-white/90 backdrop-blur-md border-b border-sky-100 z-10 shadow-sm">
+        <div class="max-w-3xl mx-auto px-3.5 py-2 sm:py-2.5 flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+                <div class="bg-gradient-to-br from-sky-500 to-blue-600 text-white p-1.5 sm:p-2 rounded-xl shadow-sm shadow-sky-500/20">
+                    <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-lg font-extrabold text-slate-800 tracking-tight leading-none">
+                        Portal Akun <span class="text-sky-600">belajar.id</span>
+                    </h1>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5">Informasi Akun Pembelajaran Peserta Didik</p>
+                </div>
+            </div>
+            <span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                <i data-lucide="book-open" class="w-3 h-3"></i>
+                <span>Edisi Sekolah</span>
+            </span>
+        </div>
+    </header>
+
+    <!-- Konten Utama Fit-to-Screen -->
+    <main class="flex-1 min-h-0 flex items-center justify-center px-3 py-2 sm:p-4 overflow-hidden">
+        <div class="w-full max-w-md bg-white rounded-2xl sm:rounded-3xl shadow-xl shadow-sky-900/5 border-2 border-sky-100 overflow-hidden flex flex-col max-h-full">
+            
+            <!-- Banner Edukatif Kompak -->
+            <div class="shrink-0 bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 px-4 py-3 sm:px-6 sm:py-4 text-white relative overflow-hidden">
+                <div class="relative z-10">
+                    <div class="inline-flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold mb-1">
+                        <i data-lucide="sparkles" class="w-3 h-3 text-amber-300"></i>
+                        <span>Satu Akun untuk Semua Layanan Belajar</span>
+                    </div>
+                    <h2 class="text-base sm:text-xl font-extrabold tracking-tight leading-tight">Cek Status Akun Siswa</h2>
+                    <p class="text-sky-100 text-[11px] sm:text-xs mt-0.5 leading-snug">
+                        Pilih kelas &amp; nama untuk melihat akun, sandi, wali kelas, dan status.
+                    </p>
+                </div>
+                <div class="absolute -right-6 -bottom-8 w-28 h-28 bg-white/10 rounded-full"></div>
+                <div class="absolute right-10 -top-6 w-20 h-20 bg-sky-300/15 rounded-full"></div>
+            </div>
+
+            <!-- Form Pencarian -->
+            <div class="p-3.5 sm:p-5 space-y-2.5 sm:space-y-3.5 flex-1 flex flex-col justify-center">
+                
+                <!-- Kotak Peringatan / Validasi -->
+                <div id="alertBox" class="hidden px-3 py-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-[11px] sm:text-xs flex items-center space-x-2">
+                    <i data-lucide="alert-circle" class="w-4 h-4 text-rose-500 shrink-0"></i>
+                    <span id="alertMessage" class="font-semibold">Pesan peringatan</span>
+                </div>
+
+                <!-- Dropdown 1: Pilih Kelas -->
+                <div class="space-y-1">
+                    <label for="kelasSelect" class="block text-xs sm:text-sm font-bold text-slate-700 flex items-center space-x-1.5">
+                        <span class="w-5 h-5 rounded-full bg-sky-100 text-sky-700 text-[11px] font-extrabold flex items-center justify-center">1</span>
+                        <span>Pilih Kelas / Rombel</span>
+                    </label>
+                    <div class="relative">
+                        <select id="kelasSelect" class="w-full appearance-none bg-sky-50/50 border-2 border-slate-200 hover:border-sky-300 focus:border-sky-500 focus:bg-white rounded-xl px-3.5 py-2.5 sm:py-3 pr-9 text-xs sm:text-sm font-semibold text-slate-700 transition-all outline-none cursor-pointer">
+                            <option value="">-- Memuat Data Kelas... --</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dropdown 2: Pilih Nama Siswa -->
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between">
+                        <label for="siswaSelect" class="block text-xs sm:text-sm font-bold text-slate-700 flex items-center space-x-1.5">
+                            <span class="w-5 h-5 rounded-full bg-sky-100 text-sky-700 text-[11px] font-extrabold flex items-center justify-center">2</span>
+                            <span>Pilih Nama Peserta Didik</span>
+                        </label>
+                        <span id="siswaCountHint" class="hidden text-[10px] sm:text-xs font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200">
+                            <span id="countNumber">0</span> Siswa
+                        </span>
+                    </div>
+                    <div class="relative">
+                        <select id="siswaSelect" disabled class="w-full appearance-none bg-slate-100 border-2 border-slate-200 focus:border-sky-500 focus:bg-white rounded-xl px-3.5 py-2.5 sm:py-3 pr-9 text-xs sm:text-sm font-semibold text-slate-400 transition-all outline-none">
+                            <option value="">-- Pilih Kelas Terlebih Dahulu --</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                            <i data-lucide="user-search" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bar Status Sinkronisasi -->
+                <div id="syncStatusBar" class="flex items-center justify-between px-3 py-1.5 sm:py-2 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-600">
+                    <div class="flex items-center space-x-2 truncate pr-2">
+                        <span id="syncDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0"></span>
+                        <span id="syncText" class="font-semibold truncate">Menghubungkan ke Spreadsheet...</span>
+                    </div>
+                    <button id="btnRefreshData" type="button" title="Muat ulang data dari Spreadsheet" class="shrink-0 text-sky-600 hover:text-sky-800 font-bold flex items-center space-x-1 cursor-pointer transition-colors">
+                        <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                        <span>Sinkron</span>
+                    </button>
+                </div>
+
+                <!-- Tombol OK -->
+                <div>
+                    <button id="btnOk" type="button" class="w-full py-2.5 sm:py-3 px-5 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-sky-600/20 flex items-center justify-center space-x-2 transition-all transform active:scale-[0.98] cursor-pointer">
+                        <span>OK - Tampilkan Kartu Akun</span>
+                        <i data-lucide="arrow-right-circle" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Tips Edukatif Ringkas -->
+                <div class="bg-amber-50/90 border border-amber-200/80 rounded-xl px-3 py-2 flex items-center space-x-2.5">
+                    <div class="bg-amber-100 text-amber-700 p-1 rounded-lg shrink-0">
+                        <i data-lucide="lightbulb" class="w-3.5 h-3.5"></i>
+                    </div>
+                    <p class="text-[10px] sm:text-[11px] text-amber-900 leading-snug">
+                        <strong>Info Belajar:</strong> Akun <span class="font-bold">belajar.id</span> gratis untuk Google Classroom, Drive, &amp; Canva Pendidikan.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Kompak -->
+    <footer class="shrink-0 text-center py-1.5 px-3 text-[10px] sm:text-xs text-slate-500 font-medium bg-white/60 border-t border-sky-100/80">
+        &copy; 2026 Layanan Informasi Akun belajar.id &bull; Terintegrasi Google Spreadsheet
+    </footer>
+
+    <!-- POP-UP MODAL INFORMASI SISWA (FIT TO VIEWPORT TANPA SCROLL) -->
+    <div id="infoModal" class="fixed inset-0 z-50 hidden items-center justify-center p-2.5 sm:p-4 bg-slate-900/60 backdrop-blur-sm overflow-hidden">
+        <div class="bg-white w-full max-w-md rounded-2xl sm:rounded-3xl shadow-2xl border-2 border-sky-100 overflow-hidden modal-enter flex flex-col max-h-[96dvh]">
+            
+            <!-- Header Modal -->
+            <div class="shrink-0 bg-gradient-to-r from-sky-600 to-indigo-600 px-4 py-2.5 sm:px-5 sm:py-3 flex items-center justify-between text-white">
+                <div class="flex items-center space-x-2">
+                    <div class="bg-white/20 p-1.5 rounded-lg">
+                        <i data-lucide="id-card" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm leading-tight">Kartu Informasi Akun</h3>
+                        <p class="text-[10px] text-sky-100">Detail Akun Pembelajaran Siswa</p>
+                    </div>
+                </div>
+                <button id="closeModalTop" type="button" class="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Isi Modal Kompak -->
+            <div class="p-3.5 sm:p-5 space-y-2.5 sm:space-y-3">
+                
+                <!-- Identitas Utama: Nama, Kelas, NIS -->
+                <div class="bg-sky-50/80 border border-sky-100 rounded-xl p-2.5 sm:p-3 space-y-1.5">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-sky-600">Nama Peserta Didik</span>
+                        <p id="modalNama" class="text-sm sm:text-base font-extrabold text-slate-800 leading-tight truncate">-</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 pt-1.5 border-t border-sky-200/60">
+                        <div>
+                            <span class="text-[10px] font-semibold text-slate-500 block">Kelas</span>
+                            <span id="modalKelas" class="text-xs sm:text-sm font-bold text-slate-800">-</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-semibold text-slate-500 block">NIS</span>
+                            <span id="modalNis" class="text-xs sm:text-sm font-bold text-slate-800">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wali Kelas & Guru Wali -->
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
+                        <span class="text-[10px] font-bold text-slate-500 flex items-center space-x-1 mb-0.5">
+                            <i data-lucide="user-check" class="w-3 h-3 text-sky-600"></i>
+                            <span>Wali Kelas</span>
+                        </span>
+                        <p id="modalWaliKelas" class="text-xs font-bold text-slate-800 leading-tight line-clamp-2">-</p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
+                        <span class="text-[10px] font-bold text-slate-500 flex items-center space-x-1 mb-0.5">
+                            <i data-lucide="users" class="w-3 h-3 text-indigo-600"></i>
+                            <span>Guru Wali</span>
+                        </span>
+                        <p id="modalGuruWali" class="text-xs font-bold text-slate-800 leading-tight line-clamp-2">-</p>
+                    </div>
+                </div>
+
+                <!-- Email belajar.id (Font Size 14px) -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+                    <div class="flex items-center justify-between mb-0.5">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Email belajar.id</span>
+                        <span id="copyFeedback" class="text-[10px] font-bold text-emerald-600 hidden">Tersalin!</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-2">
+                        <p id="modalEmail" class="text-[14px] font-bold text-sky-700 break-all select-all leading-tight">-</p>
+                        <button id="copyEmailBtn" type="button" title="Salin Email" class="shrink-0 p-1.5 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-700 transition-colors cursor-pointer">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Password & Status Aktivasi (Font Size 14px) -->
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-0.5">Password</span>
+                        <p id="modalPassword" class="text-[14px] font-bold text-slate-800 font-mono break-all select-all leading-tight">-</p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 flex flex-col justify-center">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Status Akun</span>
+                        <div>
+                            <span id="modalStatusBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[14px] font-extrabold leading-tight">
+                                -
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Catatan Aktivasi & Keamanan -->
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl px-2.5 py-2 flex items-start space-x-2">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                    <div class="text-[10px] sm:text-[11px] text-emerald-900 leading-snug space-y-1">
+                        <p>
+                            Aktifkan segera email <strong>belajar.id</strong>-nya dengan <strong>Tambah Akun</strong> di link Gmail:
+                            <a href="https://mail.google.com/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center font-bold text-sky-700 hover:text-sky-900 underline decoration-sky-400">
+                                https://mail.google.com/
+                            </a>
+                        </p>
+                        <p class="text-emerald-700">Jaga kerahasiaan kata sandi &amp; segera ganti sandi bawaan saat login pertama.</p>
+                    </div>
+                </div>
+
+                <!-- Tombol Tutup -->
+                <button id="closeModalBtn" type="button" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs sm:text-sm rounded-xl transition-colors cursor-pointer">
+                    Tutup Kartu Informasi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inisialisasi ikon Lucide
+        lucide.createIcons();
+
+        /**
+         * URL Web App Google Apps Script Anda
+         */
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxMPc49CVBUQ_F5Rs_lNJUGjqxIosOZhUvg8AWgDC53XH51jMm0EY_DCPOuk9vOLxZpOA/exec';
+
+        /**
+         * DATA CADANGAN (FALLBACK)
+         * Otomatis tergantikan oleh data live dari Google Spreadsheet saat diakses melalui Web App GAS
+         */
+        let dbSiswa = [
+            { id: 1, no: "1001", nama: "ANINDYA PUTRI MAHARANI", kelas: "VII A", email: "anindyamaharani71@smp.belajar.id", password: "$M85{421", waliKelas: "Dra. Hj. Siti Aminah, M.Pd.", guruWali: "Budi Santoso, S.Pd.", status: "AKTIF" },
+            { id: 2, no: "1002", nama: "BAGAS PRATAMA WIJAYA", kelas: "VII A", email: "bagaswijaya44@smp.belajar.id", password: "Sudah Ganti Password", waliKelas: "Dra. Hj. Siti Aminah, M.Pd.", guruWali: "Budi Santoso, S.Pd.", status: "AKTIF" },
+            { id: 3, no: "1003", nama: "CITRA KIRANA DEWI", kelas: "VII A", email: "citradewi12@smp.belajar.id", password: "$M85{908", waliKelas: "Dra. Hj. Siti Aminah, M.Pd.", guruWali: "Rina Marlina, S.Pd.", status: "BELUM AKTIF" }
+        ];
+
+        // Referensi Elemen DOM
+        const kelasSelect = document.getElementById('kelasSelect');
+        const siswaSelect = document.getElementById('siswaSelect');
+        const siswaCountHint = document.getElementById('siswaCountHint');
+        const countNumber = document.getElementById('countNumber');
+        const btnOk = document.getElementById('btnOk');
+        const alertBox = document.getElementById('alertBox');
+        const alertMessage = document.getElementById('alertMessage');
+        const syncDot = document.getElementById('syncDot');
+        const syncText = document.getElementById('syncText');
+        const btnRefreshData = document.getElementById('btnRefreshData');
+
+        // Referensi Elemen Modal
+        const infoModal = document.getElementById('infoModal');
+        const closeModalTop = document.getElementById('closeModalTop');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const copyEmailBtn = document.getElementById('copyEmailBtn');
+        const copyFeedback = document.getElementById('copyFeedback');
+
+        /**
+         * Menghubungkan frontend Index.html dengan backend Code.gs via google.script.run atau fetch Web App URL
+         */
+        async function syncFromSpreadsheet() {
+            syncDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse';
+            syncText.textContent = 'Mengambil data dari Spreadsheet...';
+            kelasSelect.disabled = true;
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(function(data) {
+                        if (Array.isArray(data) && data.length > 0) {
+                            dbSiswa = data;
+                            syncDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+                            syncText.textContent = `Terhubung (${dbSiswa.length} siswa dimuat)`;
+                        } else {
+                            syncDot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+                            syncText.textContent = 'Sheet kosong atau kolom tidak sesuai';
+                        }
+                        kelasSelect.disabled = false;
+                        populateKelas();
+                    })
+                    .withFailureHandler(function(err) {
+                        syncDot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+                        syncText.textContent = 'Gagal terhubung ke Spreadsheet';
+                        showAlert('Gagal memuat data dari Spreadsheet: ' + err.message);
+                        kelasSelect.disabled = false;
+                        populateKelas();
+                    })
+                    .getDataSiswa();
+            } else {
+                // Jika dibuka di luar Google Apps Script, ambil data dari Web App URL (dengan redirect follow untuk GAS)
+                try {
+                    const response = await fetch(`${WEB_APP_URL}?action=getData`, {
+                        method: 'GET',
+                        redirect: 'follow'
+                    });
+                    if (!response.ok) throw new Error('Respon server tidak valid');
+                    const data = await response.json();
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        dbSiswa = data;
+                        syncDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+                        syncText.textContent = `Terhubung via Web URL (${dbSiswa.length} siswa)`;
+                    } else {
+                        syncDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
+                        syncText.textContent = 'Data sheet kosong (menampilkan cadangan)';
+                    }
+                } catch (err) {
+                    syncDot.className = 'w-2.5 h-2.5 rounded-full bg-sky-500';
+                    syncText.textContent = 'Mode Lokal (Pastikan Code.gs sudah di-deploy versi baru)';
+                } finally {
+                    kelasSelect.disabled = false;
+                    populateKelas();
+                }
+            }
+        }
+
+        // 1. Mengisi Dropdown Kelas
+        function populateKelas() {
+            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas Kamu --</option>';
+            siswaSelect.innerHTML = '<option value="">-- Pilih Kelas Terlebih Dahulu --</option>';
+            siswaSelect.disabled = true;
+            siswaSelect.classList.add('bg-slate-100', 'text-slate-400');
+            siswaSelect.classList.remove('bg-sky-50/50', 'text-slate-700', 'cursor-pointer');
+            siswaCountHint.classList.add('hidden');
+
+            const daftarKelas = [...new Set(dbSiswa.map(item => item.kelas))].filter(Boolean);
+            daftarKelas.forEach(kelas => {
+                const option = document.createElement('option');
+                option.value = kelas;
+                option.textContent = `Kelas ${kelas}`;
+                kelasSelect.appendChild(option);
+            });
+        }
+
+        // 2. Filter Siswa saat Kelas dipilih
+        kelasSelect.addEventListener('change', function() {
+            const selectedKelas = this.value;
+            hideAlert();
+            siswaSelect.innerHTML = '';
+
+            if (!selectedKelas) {
+                siswaSelect.disabled = true;
+                siswaSelect.classList.add('bg-slate-100', 'text-slate-400');
+                siswaSelect.classList.remove('bg-sky-50/50', 'text-slate-700', 'cursor-pointer');
+                siswaSelect.innerHTML = '<option value="">-- Pilih Kelas Terlebih Dahulu --</option>';
+                siswaCountHint.classList.add('hidden');
+                return;
+            }
+
+            const siswaFiltered = dbSiswa.filter(s => s.kelas === selectedKelas);
+
+            siswaSelect.disabled = false;
+            siswaSelect.classList.remove('bg-slate-100', 'text-slate-400');
+            siswaSelect.classList.add('bg-sky-50/50', 'text-slate-700', 'cursor-pointer');
+
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.textContent = `-- Pilih Nama Siswa (${siswaFiltered.length} Siswa) --`;
+            siswaSelect.appendChild(defaultOpt);
+
+            siswaFiltered.forEach((siswa, idx) => {
+                const option = document.createElement('option');
+                option.value = siswa.id || idx;
+                option.textContent = siswa.nama;
+                siswaSelect.appendChild(option);
+            });
+
+            countNumber.textContent = siswaFiltered.length;
+            siswaCountHint.classList.remove('hidden');
+        });
+
+        siswaSelect.addEventListener('change', hideAlert);
+
+        // Tombol Sinkronkan Ulang
+        btnRefreshData.addEventListener('click', function() {
+            hideAlert();
+            syncFromSpreadsheet();
+        });
+
+        // 3. Tombol OK -> Validasi & Tampilkan Modal
+        btnOk.addEventListener('click', function() {
+            const selectedKelas = kelasSelect.value;
+            const selectedId = siswaSelect.value;
+
+            if (!selectedKelas) {
+                showAlert('Silakan pilih Kelas terlebih dahulu.');
+                kelasSelect.focus();
+                return;
+            }
+
+            if (!selectedId) {
+                showAlert('Silakan pilih Nama Siswa terlebih dahulu.');
+                siswaSelect.focus();
+                return;
+            }
+
+            const siswaData = dbSiswa.find((s, idx) => (s.id || idx) == selectedId && s.kelas === selectedKelas);
+
+            if (siswaData) {
+                openStudentModal(siswaData);
+            } else {
+                showAlert('Data siswa tidak ditemukan di database.');
+            }
+        });
+
+        // 4. Mengisi & Membuka Pop-Up Detail Siswa
+        function openStudentModal(siswa) {
+            document.getElementById('modalNama').textContent = siswa.nama || '-';
+            document.getElementById('modalKelas').textContent = siswa.kelas || '-';
+            document.getElementById('modalNis').textContent = siswa.no || '-';
+            document.getElementById('modalWaliKelas').textContent = siswa.waliKelas || '-';
+            document.getElementById('modalGuruWali').textContent = siswa.guruWali || '-';
+            document.getElementById('modalEmail').textContent = siswa.email || '-';
+            document.getElementById('modalPassword').textContent = siswa.password || '-';
+
+            const badge = document.getElementById('modalStatusBadge');
+            const statusUpper = (siswa.status || '').toUpperCase();
+            badge.textContent = statusUpper || 'TIDAK DIKETAHUI';
+
+            if (statusUpper === 'AKTIF') {
+                badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-[14px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200';
+            } else {
+                badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-[14px] font-extrabold bg-rose-100 text-rose-800 border border-rose-200';
+            }
+
+            copyFeedback.classList.add('hidden');
+            infoModal.classList.remove('hidden');
+            infoModal.classList.add('flex');
+        }
+
+        function closeStudentModal() {
+            infoModal.classList.add('hidden');
+            infoModal.classList.remove('flex');
+        }
+
+        closeModalTop.addEventListener('click', closeStudentModal);
+        closeModalBtn.addEventListener('click', closeStudentModal);
+        infoModal.addEventListener('click', function(e) {
+            if (e.target === infoModal) closeStudentModal();
+        });
+
+        // Fitur Salin Email
+        copyEmailBtn.addEventListener('click', function() {
+            const emailText = document.getElementById('modalEmail').textContent;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = emailText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            copyFeedback.classList.remove('hidden');
+            setTimeout(() => {
+                copyFeedback.classList.add('hidden');
+            }, 2000);
+        });
+
+        function showAlert(msg) {
+            alertMessage.textContent = msg;
+            alertBox.classList.remove('hidden');
+        }
+
+        function hideAlert() {
+            alertBox.classList.add('hidden');
+        }
+
+        // Jalankan sinkronisasi otomatis saat halaman dibuka
+        syncFromSpreadsheet();
+    </script>
+</body>
+</html>
